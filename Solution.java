@@ -62,25 +62,45 @@ public class Solution {
       }
     }
 
-  /** called repeatadly - moves the animated tetis peice down 1*/
-  public boolean step() {
-    //move the points down one for the moving piece
-    for (int i = display.getNumRows() -1; i >= 0; i--){
-      for (int j = display.getNumColumns() -1; j >=0; j--){
 
-        if(grid[i][j] != null && (i +1) < display.getNumRows()){
-          if(grid[i][j].getMoving()){
-            grid[i+1][j] = grid[i][j];
-            grid[i][j] = null; 
-          }
-        }
 
-        //TODO: add code that makes the status of a shape not moving if it hits something
+  public boolean canMoveDown(Shape currShape){
+
+    for(Point p: currShape.getPoints()){
+
+      if(p.getRow() + 1 >= display.getNumRows()){
+        return false; 
+      }
+      //if the next space down is not null and is not a point part of your current shape then you can't move down
+      else if( this.grid[p.getRow()+1][p.getColumn()] != null && 
+          !currShape.getPoints().contains(this.grid[p.getRow()+1][p.getColumn()]) ){
+        
+        return false; 
+      }
+
+    }
+
+    return true; 
+  }
+
+  public void step(Shape currShape){
+
+    //if the shape cannot move down stop moving it
+    if(!canMoveDown(currShape)){
+      currShape.stopMoving();
+    }
+    //if you can move down
+    //make the grid null for all the old locations
+    if(canMoveDown(currShape)){
+      for(Point p: currShape.getPoints()){
+        this.grid[p.getRow()][p.getColumn()] = null;
+        //adding 1 to the row and then reassign the grid location, not sure if this will work
+        p.row = p.row + 1; 
+        this.grid[p.getRow()][p.getColumn()] = p; 
 
       }
+
     }
-    
-    return false; //if you couldn't move the piece any further down 
   }
 
   /**Classes 
@@ -99,10 +119,14 @@ public class Solution {
 
       //square shape piece
       if (shapeType == 0){
-        shape.add(new Point(0, 5, new Color(79, 235, 52)));
-        shape.add(new Point(0, 6, new Color(79, 235, 52)));
-        shape.add(new Point(1, 5, new Color(79, 235, 52)));
+        //insert verse order because arraylist holds order and you want to update them from bottom to top
         shape.add(new Point(1, 6, new Color(79, 235, 52)));
+        shape.add(new Point(1, 5, new Color(79, 235, 52)));
+        shape.add(new Point(0, 6, new Color(79, 235, 52)));
+        shape.add(new Point(0, 5, new Color(79, 235, 52)));
+        
+        
+
 
       }
     }
@@ -112,6 +136,9 @@ public class Solution {
     }
     public boolean getMoving(){
       return this.isMoving; 
+    }
+    public void stopMoving(){
+      this.isMoving = false; 
     }
 
    }
@@ -234,16 +261,16 @@ public class Solution {
   private void runOneTime() {
     
     //pop a piece out of the queue
-    Shape currPiece = queue.pop();
+    Shape currShape = queue.pop();
     //add the new piece to the grid 
-    for(Point p: currPiece.getPoints()){
+    for(Point p: currShape.getPoints()){
       grid[p.getRow()][p.getColumn()] = p; 
     }
     
     //while the piece is moving
     //currently only one piece will fall, I need to update the step code to get it to stop moving when it hits something
-    while(currPiece.getMoving()){
-      step();
+    while(currShape.getMoving()){
+      step(currShape);
       updateDisplay();
       display.repaint();
       display.pause(1000); // Wait for redrawing and for mouse
