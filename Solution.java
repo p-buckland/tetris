@@ -4,14 +4,14 @@ import java.util.*;
 
 public class Solution {
 
-  // Add constants for particle types here.
   public static final int EMPTY = 0;
   public static final int METAL = 1;
 
   public static final String[] NAMES = {"Empty", "Metal"};
 
-  // Do not add any more fields as part of Lab 5.
   private int[][] grid;
+  private Color[][]colorGrid; //this will hold the colors for each tetris piece 
+
   private SandDisplayInterface display;
   private RandomGenerator random;
 
@@ -34,29 +34,28 @@ public class Solution {
    * @param tool
    */
   private void locationClicked(int row, int col, int tool) {
-    // TODO: Populate this method in step 3.
+    // TODO: when a user clicks on a location it will drop the animated tetris piece 
+    // and turn it into a static piece 
   }
 
   /** Copies each element of grid into the display. */
   public void updateDisplay() {
-    // TODO: Populate this method in step 4 and beyond.
+    //TODO display the elements 
+    //display.setColor = Color object in the color grid 
   }
 
-  /** Called repeatedly. Causes one random particle to maybe do something. */
+  /** called repeatadly - moves the animated tetis peice down 1*/
   public void step() {
-    // TODO: Populate this method in step 6 and beyond.
+    // TODO- each time move the animated piece down 1 
+    //if(piece is dropped - mouse is clicked) 
+    //drop the piece down in that column 
+    //stop the piece when each cell below it is full or a part of the piece 
   }
 
-  /********************************************************************/
-  /********************************************************************/
-  /**
-   * DO NOT MODIFY
-   *
-   * <p>The rest of this file is UI and testing infrastructure. Do not modify as part of pre-GDA Lab
-   * 5.
+  /**Classes 
    */
-  /********************************************************************/
-  /********************************************************************/
+
+  //TODO Add a tetris piece class 
 
   private static class Point {
     private int row;

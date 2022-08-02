@@ -50,6 +50,7 @@ public class SandDisplay extends JComponent
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
     topPanel.add(buttonPanel);
 
+    //this is where we would change the code to show the tetris piece to the right 
     buttons = new JButton[buttonNames.length];
 
     for (int i = 0; i < buttons.length; i++) {
@@ -165,11 +166,11 @@ public class SandDisplay extends JComponent
 
   public static void main(String[] args) {
     // Interactive mode, create the GUI and run forever
-    int numRows = 120;
-    int numCols = 80;
+    int numRows = 20;
+    int numCols = 10;
     Solution lab =
         new Solution(
-            new SandDisplay("Falling Sand", numRows, numCols, Solution.NAMES),
+            new SandDisplay("Tetris", numRows, numCols, Solution.NAMES), //here will peek the upcoming pieces (if possible)
             new Solution.RandomGenerator(numRows, numCols));
     lab.run();
   }
