@@ -4,15 +4,12 @@ import java.util.*;
 
 public class Solution {
 
-
-  //public static final int EMPTY = 0;
-  //public static final int TETRIS = 1;
-
   public static final String[] NAMES = {"Add Score here", "show next piece"};
 
   private Point[][] grid;
   private Deque<Shape> queue;
 
+  private Color[] colorOptions; 
   private SandDisplayInterface display;
   private RandomGenerator random;
 
@@ -27,6 +24,8 @@ public class Solution {
     this.random = random;
     this.grid = new Point[display.getNumRows()][display.getNumColumns()];
     this. queue = new ArrayDeque<Shape>();
+    this.colorOptions = new Color[] { new Color(50, 158, 168), new Color(79, 235, 52), 
+        new Color(168, 162, 50), new Color(154, 50, 168), new Color(168, 127, 50)};
 
     //adding two tetris pieces to the queue
     //TODO: figure out how many you should add to the queue
@@ -119,20 +118,24 @@ public class Solution {
     public Shape (int shapeType){
       this.shape = new ArrayList<Point>();
       this.isMoving = true; 
+      
 
+      //insert reverse order because arraylist holds order and you want to update them from bottom of the grid to top
+      
       //square shape piece
       if (shapeType == 0){
-        //insert verse order because arraylist holds order and you want to update them from
-        shape.add(new Point(1, 6, new Color(79, 235, 52)));
-        shape.add(new Point(1, 5, new Color(79, 235, 52)));
-        shape.add(new Point(0, 6, new Color(79, 235, 52)));
-        shape.add(new Point(0, 5, new Color(79, 235, 52)));
-      } else if(shapeType == 1){
+        shape.add(new Point(1, 6, new Color(50, 158, 168)));
+        shape.add(new Point(1, 5, new Color(50, 158, 168)));
+        shape.add(new Point(0, 6, new Color(50, 158, 168)));
+        shape.add(new Point(0, 5, new Color(50, 158, 168)));
+      } //L shape piece
+      else if(shapeType == 1){
         shape.add(new Point(2, 6, new Color(79, 235, 52)));
         shape.add(new Point(2, 5, new Color(79, 235, 52)));
         shape.add(new Point(1, 5, new Color(79, 235, 52)));
         shape.add(new Point(0, 5, new Color(79, 235, 52)));
-      } else if (shapeType == 2){
+      } //straight piece 
+      else if (shapeType == 2){
         shape.add(new Point(3, 5, new Color(79, 235, 52)));
         shape.add(new Point(2, 5, new Color(79, 235, 52)));
         shape.add(new Point(1, 5, new Color(79, 235, 52)));
@@ -185,35 +188,26 @@ public class Solution {
    * Special random number generating class to randomize tetris shapes & colors 
    */
   public static class RandomGenerator {
-    private static Random randomNumberGeneratorForPoints;
-    private static Random randomNumberGeneratorForDirections;
-    private int numRows;
-    private int numCols;
+    private static Random randomNumberGeneratorForColumn;
+    private static Random randomNumberGeneratorForColor;
+    private static int numCols; 
 
-    public RandomGenerator(int seed, int numRows, int numCols) {
-      randomNumberGeneratorForPoints = new Random(seed);
-      randomNumberGeneratorForDirections = new Random(seed);
-      this.numRows = numRows;
-      this.numCols = numCols;
+    public RandomGenerator(int numCols) {
+      randomNumberGeneratorForColumn = new Random();
+      randomNumberGeneratorForColor = new Random();
+      this.numCols = numCols; 
+
     }
-
-    public RandomGenerator(int numRows, int numCols) {
-      randomNumberGeneratorForPoints = new Random();
-      randomNumberGeneratorForDirections = new Random();
-      this.numRows = numRows;
-      this.numCols = numCols;
-    }
-
 
     /**
-     * Method that returns a random direction.
-     *
-     * @return an int indicating the direction of movement: 0: Indicating the water should attempt
-     *     to move down 1: Indicating the water should attempt to move right 2: Indicating the water
-     *     should attempt to move left
+     * Method that returns a random column to start the tetris piece in
      */
-    public int getRandomDirection() {
-      return randomNumberGeneratorForDirections.nextInt(3);
+    public int getRandomColumn() {
+      return randomNumberGeneratorForColumn.nextInt(numCols-1);
+    }
+
+    public int getRandomColor(){
+      return randomNumberGeneratorForColor.nextInt(4);
     }
   }
 

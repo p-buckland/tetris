@@ -177,7 +177,7 @@ public class SandDisplay extends JComponent
     Solution lab =
         new Solution(
             new SandDisplay("Tetris", numRows, numCols, Solution.NAMES), //here will peek the upcoming pieces (if possible)
-            new Solution.RandomGenerator(numRows, numCols));
+            new Solution.RandomGenerator(numCols));
     lab.run();
   }
 }
