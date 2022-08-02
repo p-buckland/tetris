@@ -29,7 +29,10 @@ public class Solution {
     this. queue = new ArrayDeque<Shape>();
 
     //adding two tetris pieces to the queue
-    queue.push(new Shape(0));
+    //TODO: figure out how many you should add to the queue
+    
+    queue.push(new Shape(1));
+    queue.push(new Shape(2));
     queue.push(new Shape(0));
   }
 
@@ -103,14 +106,14 @@ public class Solution {
     }
   }
 
-  /**Classes 
+  /**Shape class to represent a tetris piece 
+   * 
    */
-
    private static class Shape{
     private ArrayList<Point> shape; 
     private boolean isMoving; 
     
-    //TODO: update code to randomize the location in the first row
+    //TODO: update code to randomize the column 
     //TODO: update code to randomize the color of a list of colors 
 
     public Shape (int shapeType){
@@ -119,15 +122,21 @@ public class Solution {
 
       //square shape piece
       if (shapeType == 0){
-        //insert verse order because arraylist holds order and you want to update them from bottom to top
+        //insert verse order because arraylist holds order and you want to update them from
         shape.add(new Point(1, 6, new Color(79, 235, 52)));
         shape.add(new Point(1, 5, new Color(79, 235, 52)));
         shape.add(new Point(0, 6, new Color(79, 235, 52)));
         shape.add(new Point(0, 5, new Color(79, 235, 52)));
-        
-        
-
-
+      } else if(shapeType == 1){
+        shape.add(new Point(2, 6, new Color(79, 235, 52)));
+        shape.add(new Point(2, 5, new Color(79, 235, 52)));
+        shape.add(new Point(1, 5, new Color(79, 235, 52)));
+        shape.add(new Point(0, 5, new Color(79, 235, 52)));
+      } else if (shapeType == 2){
+        shape.add(new Point(3, 5, new Color(79, 235, 52)));
+        shape.add(new Point(2, 5, new Color(79, 235, 52)));
+        shape.add(new Point(1, 5, new Color(79, 235, 52)));
+        shape.add(new Point(0, 5, new Color(79, 235, 52)));
       }
     }
 
@@ -143,20 +152,18 @@ public class Solution {
 
    }
 
-
+  /** Point class - four points make up a tetris shape 
+  * 
+  */
   private static class Point {
     private int row;
     private int column;
-    private boolean moving; //true if falling, false if static 
-    private boolean isPiece; 
     private Color color; 
 
 
     public Point(int row, int column, Color color) {
       this.row = row;
       this.column = column;
-      this.moving = true; 
-      this.isPiece = true; 
       this.color = color; 
     }
 
@@ -168,26 +175,6 @@ public class Solution {
       return column;
     }
 
-    public void setRow(){
-      this.row = row +1;
-    }
-
-    public void setColumn(){
-      this.column = column;
-    }
-
-    public boolean getMoving(){
-      return moving; 
-    }
-
-    public boolean getIsPiece(){
-      return isPiece; 
-    }
-
-    public void notMoving(){
-      this.moving = false; 
-    }
-
     public Color getColor(){
       return color; 
     }
@@ -195,11 +182,7 @@ public class Solution {
   }
 
   /**
-   * Special random number generating class to help get consistent results for testing.
-   *
-   * <p>Please use getRandomPoint to get an arbitrary point on the grid to evaluate.
-   *
-   * <p>When dealing with water, please use getRandomDirection.
+   * Special random number generating class to randomize tetris shapes & colors 
    */
   public static class RandomGenerator {
     private static Random randomNumberGeneratorForPoints;
