@@ -4,13 +4,14 @@ import java.util.*;
 
 public class Solution {
 
-  public static final int EMPTY = 0;
-  public static final int METAL = 1;
 
-  public static final String[] NAMES = {"Empty", "Metal"};
+  //public static final int EMPTY = 0;
+  //public static final int TETRIS = 1;
 
-  private int[][] grid;
-  private Color[][]colorGrid; //this will hold the colors for each tetris piece 
+  public static final String[] NAMES = {"Add Score here", "show next piece"};
+
+  private Point[][] grid;
+  private Deque<Shape> queue;
 
   private SandDisplayInterface display;
   private RandomGenerator random;
@@ -24,46 +25,112 @@ public class Solution {
   public Solution(SandDisplayInterface display, RandomGenerator random) {
     this.display = display;
     this.random = random;
+    this.grid = new Point[display.getNumRows()][display.getNumColumns()];
+    this. queue = new ArrayDeque<Shape>();
+
+    //adding two tetris pieces to the queue
+    queue.push(new Shape(0));
+    queue.push(new Shape(0));
   }
+
 
   /**
    * Called when the user clicks on a location.
    *
-   * @param row
    * @param col
-   * @param tool
    */
   private void locationClicked(int row, int col, int tool) {
     // TODO: when a user clicks on a location it will drop the animated tetris piece 
-    // and turn it into a static piece 
+    // and turn it into a static piece
+
+    
   }
 
   /** Copies each element of grid into the display. */
   public void updateDisplay() {
-    //TODO display the elements 
-    //display.setColor = Color object in the color grid 
-  }
+
+    for (int i = 0; i <display.getNumRows(); i++){
+      for (int j = 0; j < display.getNumColumns(); j++){
+        
+        if(grid[i][j] != null){
+          display.setColor(i, j, grid[i][j].getColor());
+        }else if(grid[i][j] == null){
+          display.setColor(i, j, Color.BLACK);
+         }
+        }
+
+      }
+    }
 
   /** called repeatadly - moves the animated tetis peice down 1*/
-  public void step() {
-    // TODO- each time move the animated piece down 1 
-    //if(piece is dropped - mouse is clicked) 
-    //drop the piece down in that column 
-    //stop the piece when each cell below it is full or a part of the piece 
+  public boolean step() {
+    //move the points down one for the moving piece
+    for (int i = display.getNumRows() -1; i >= 0; i--){
+      for (int j = display.getNumColumns() -1; j >=0; j--){
+
+        if(grid[i][j] != null && (i +1) < display.getNumRows()){
+          if(grid[i][j].getMoving()){
+            grid[i+1][j] = grid[i][j];
+            grid[i][j] = null; 
+          }
+        }
+
+        //TODO: add code that makes the status of a shape not moving if it hits something
+
+      }
+    }
+    
+    return false; //if you couldn't move the piece any further down 
   }
 
   /**Classes 
    */
 
-  //TODO Add a tetris piece class 
+   private static class Shape{
+    private ArrayList<Point> shape; 
+    private boolean isMoving; 
+    
+    //TODO: update code to randomize the location in the first row
+    //TODO: update code to randomize the color of a list of colors 
+
+    public Shape (int shapeType){
+      this.shape = new ArrayList<Point>();
+      this.isMoving = true; 
+
+      //square shape piece
+      if (shapeType == 0){
+        shape.add(new Point(0, 5, new Color(79, 235, 52)));
+        shape.add(new Point(0, 6, new Color(79, 235, 52)));
+        shape.add(new Point(1, 5, new Color(79, 235, 52)));
+        shape.add(new Point(1, 6, new Color(79, 235, 52)));
+
+      }
+    }
+
+    public ArrayList<Point> getPoints(){
+      return this.shape;
+    }
+    public boolean getMoving(){
+      return this.isMoving; 
+    }
+
+   }
+
 
   private static class Point {
     private int row;
     private int column;
+    private boolean moving; //true if falling, false if static 
+    private boolean isPiece; 
+    private Color color; 
 
-    public Point(int row, int column) {
+
+    public Point(int row, int column, Color color) {
       this.row = row;
       this.column = column;
+      this.moving = true; 
+      this.isPiece = true; 
+      this.color = color; 
     }
 
     public int getRow() {
@@ -73,6 +140,31 @@ public class Solution {
     public int getColumn() {
       return column;
     }
+
+    public void setRow(){
+      this.row = row +1;
+    }
+
+    public void setColumn(){
+      this.column = column;
+    }
+
+    public boolean getMoving(){
+      return moving; 
+    }
+
+    public boolean getIsPiece(){
+      return isPiece; 
+    }
+
+    public void notMoving(){
+      this.moving = false; 
+    }
+
+    public Color getColor(){
+      return color; 
+    }
+
   }
 
   /**
@@ -102,11 +194,6 @@ public class Solution {
       this.numCols = numCols;
     }
 
-    public Point getRandomPoint() {
-      return new Point(
-          randomNumberGeneratorForPoints.nextInt(numRows),
-          randomNumberGeneratorForPoints.nextInt(numCols));
-    }
 
     /**
      * Method that returns a random direction.
@@ -121,36 +208,7 @@ public class Solution {
   }
 
   public static void main(String[] args) {
-    // Test mode, read the input, run the simulation and print the result
-    Scanner in = new Scanner(System.in);
-    int numRows = in.nextInt();
-    int numCols = in.nextInt();
-    int iterations = in.nextInt();
-    Solution lab =
-        new Solution(new NullDisplay(numRows, numCols), new RandomGenerator(0, numRows, numCols));
-    lab.readGridValues(in);
-    lab.runNTimes(iterations);
-    lab.printGrid();
-  }
-
-  /**
-   * Read a grid set up from the input scanner.
-   *
-   * @param in
-   */
-  private void readGridValues(Scanner in) {
-    for (int i = 0; i < grid.length; i++) {
-      for (int j = 0; j < grid[i].length; j++) {
-        grid[i][j] = in.nextInt();
-      }
-    }
-  }
-
-  /** Output the current status of the grid for testing purposes. */
-  private void printGrid() {
-    for (int i = 0; i < grid.length; i++) {
-      System.out.println(Arrays.toString(grid[i]));
-    }
+    //deleted all this as it was for testing
   }
 
   /** Runner that advances the display a determinate number of times. */
@@ -160,27 +218,39 @@ public class Solution {
     }
   }
 
-  /** Runner that controls the window until it is closed. */
+  /** Runner that controls the window until it is closed. */ //need to change this until the grid is at the top
   public void run() {
     while (true) {
       runOneTime();
     }
   }
 
+
+  //THIS IS WHAT CONTROLS THE GAME
   /**
    * Runs one iteration of the display. Note that one iteration may call step repeatedly depending
    * on the speed of the UI.
    */
   private void runOneTime() {
-    for (int i = 0; i < display.getSpeed(); i++) {
-      step();
+    
+    //pop a piece out of the queue
+    Shape currPiece = queue.pop();
+    //add the new piece to the grid 
+    for(Point p: currPiece.getPoints()){
+      grid[p.getRow()][p.getColumn()] = p; 
     }
-    updateDisplay();
-    display.repaint();
-    display.pause(1); // Wait for redrawing and for mouse
-    int[] mouseLoc = display.getMouseLocation();
-    if (mouseLoc != null) { // Test if mouse clicked
-      locationClicked(mouseLoc[0], mouseLoc[1], display.getTool());
+    
+    //while the piece is moving
+    //currently only one piece will fall, I need to update the step code to get it to stop moving when it hits something
+    while(currPiece.getMoving()){
+      step();
+      updateDisplay();
+      display.repaint();
+      display.pause(1000); // Wait for redrawing and for mouse
+      int[] mouseLoc = display.getMouseLocation();
+      if (mouseLoc != null) { // Test if mouse clicked
+        locationClicked(mouseLoc[0], mouseLoc[1], display.getTool());
+      }
     }
   }
 

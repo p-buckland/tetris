@@ -27,7 +27,7 @@ public class SandDisplay extends JComponent
     this.numCols = numCols;
     tool = 1;
     mouseLoc = null;
-    speed = computeSpeed(50);
+    //speed = computeSpeed(50);
 
     // determine cell size
     cellSize = Math.max(1, 600 / Math.max(numRows, numCols));
@@ -62,6 +62,7 @@ public class SandDisplay extends JComponent
 
     buttons[tool].setSelected(true);
 
+    /* 
     slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
     slider.addChangeListener(this);
     slider.setMajorTickSpacing(1);
@@ -71,8 +72,9 @@ public class SandDisplay extends JComponent
     labelTable.put(100, new JLabel("Fast"));
     slider.setLabelTable(labelTable);
     slider.setPaintLabels(true);
+    */
 
-    frame.getContentPane().add(slider);
+    //frame.getContentPane().add(slider);
 
     frame.pack();
     frame.setVisible(true);
@@ -148,21 +150,25 @@ public class SandDisplay extends JComponent
     ((JButton) e.getSource()).setSelected(true);
   }
 
+  
   public void stateChanged(ChangeEvent e) {
     speed = computeSpeed(slider.getValue());
   }
+  
 
   // returns number of times to step between repainting and processing mouse input
   public int getSpeed() {
     return speed;
   }
 
+  
   // returns speed based on sliderValue
   // speed of 0 returns 10^3
   // speed of 100 returns 10^6
   private int computeSpeed(int sliderValue) {
     return (int) Math.pow(10, 0.03 * sliderValue + 3);
-  }
+  } 
+  
 
   public static void main(String[] args) {
     // Interactive mode, create the GUI and run forever
