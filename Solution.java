@@ -33,6 +33,15 @@ public class Solution {
     queue.push(new Shape(1));
     queue.push(new Shape(2));
     queue.push(new Shape(0));
+    queue.push(new Shape(1));
+    queue.push(new Shape(2));
+    queue.push(new Shape(0));
+    queue.push(new Shape(1));
+    queue.push(new Shape(2));
+    queue.push(new Shape(0));
+    queue.push(new Shape(1));
+    queue.push(new Shape(2));
+    queue.push(new Shape(0));
   }
 
 
@@ -143,22 +152,22 @@ public class Solution {
       
       //square shape piece
       if (shapeType == 0){
-        shape.add(new Point(1, 6, new Color(50, 158, 168)));
-        shape.add(new Point(1, 5, new Color(50, 158, 168)));
-        shape.add(new Point(0, 6, new Color(50, 158, 168)));
-        shape.add(new Point(0, 5, new Color(50, 158, 168)));
+        shape.add(new Point(1, 6, new Color(92, 88, 182)));
+        shape.add(new Point(1, 5, new Color(92, 88, 182)));
+        shape.add(new Point(0, 6, new Color(92, 88, 182)));
+        shape.add(new Point(0, 5, new Color(92, 88, 182)));
       } //L shape piece
       else if(shapeType == 1){
-        shape.add(new Point(2, 6, new Color(79, 235, 52)));
-        shape.add(new Point(2, 5, new Color(79, 235, 52)));
-        shape.add(new Point(1, 5, new Color(79, 235, 52)));
-        shape.add(new Point(0, 5, new Color(79, 235, 52)));
+        shape.add(new Point(2, 6, new Color(185, 87, 206)));
+        shape.add(new Point(2, 5, new Color(185, 87, 206)));
+        shape.add(new Point(1, 5, new Color(185, 87, 206)));
+        shape.add(new Point(0, 5, new Color(185, 87, 206)));
       } //straight piece 
       else if (shapeType == 2){
-        shape.add(new Point(3, 5, new Color(79, 235, 52)));
-        shape.add(new Point(2, 5, new Color(79, 235, 52)));
-        shape.add(new Point(1, 5, new Color(79, 235, 52)));
-        shape.add(new Point(0, 5, new Color(79, 235, 52)));
+        shape.add(new Point(3, 5, new Color(255, 145, 26)));
+        shape.add(new Point(2, 5, new Color(255, 145, 26)));
+        shape.add(new Point(1, 5, new Color(255, 145, 26)));
+        shape.add(new Point(0, 5, new Color(255, 145, 26)));
       }
     }
 
