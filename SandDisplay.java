@@ -9,7 +9,6 @@ public class SandDisplay extends JComponent
     implements MouseListener,
         MouseMotionListener,
         ActionListener,
-        ChangeListener,
         Solution.SandDisplayInterface {
   private Image image;
   private int cellSize;
@@ -19,15 +18,16 @@ public class SandDisplay extends JComponent
   private int numCols;
   private int[] mouseLoc;
   private JButton[] buttons;
-  private JSlider slider;
-  private int speed;
+  private boolean gameStarted; 
+  private boolean gameEnded; 
 
   public SandDisplay(String title, int numRows, int numCols, String[] buttonNames) {
     this.numRows = numRows;
     this.numCols = numCols;
+    this.gameStarted = false; 
+    this.gameEnded = false; 
     tool = 1;
     mouseLoc = null;
-    //speed = computeSpeed(50);
 
     // determine cell size
     cellSize = Math.max(1, 600 / Math.max(numRows, numCols));
@@ -50,7 +50,7 @@ public class SandDisplay extends JComponent
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
     topPanel.add(buttonPanel);
 
-    //this is where we would change the code to show the tetris piece to the right 
+    //Buttons code to work on if needed
     buttons = new JButton[buttonNames.length];
 
     for (int i = 0; i < buttons.length; i++) {
@@ -61,20 +61,6 @@ public class SandDisplay extends JComponent
     }
 
     buttons[tool].setSelected(true);
-
-    /* 
-    slider = new JSlider(JSlider.HORIZONTAL, 0, 100, 50);
-    slider.addChangeListener(this);
-    slider.setMajorTickSpacing(1);
-    slider.setPaintTicks(true);
-    Hashtable<Integer, JLabel> labelTable = new Hashtable<Integer, JLabel>();
-    labelTable.put(0, new JLabel("Slow"));
-    labelTable.put(100, new JLabel("Fast"));
-    slider.setLabelTable(labelTable);
-    slider.setPaintLabels(true);
-    */
-
-    //frame.getContentPane().add(slider);
 
     frame.pack();
     frame.setVisible(true);
@@ -106,6 +92,14 @@ public class SandDisplay extends JComponent
 
   public int getTool() {
     return tool;
+  }
+
+  public boolean getGameStarted(){
+    return gameStarted;
+  }
+
+  public boolean getGameEnded(){
+    return gameEnded;
   }
 
   public void setColor(int row, int col, Color color) {
@@ -150,29 +144,13 @@ public class SandDisplay extends JComponent
   }
 
   public void actionPerformed(ActionEvent e) {
-    tool = Integer.parseInt(e.getActionCommand());
-    for (JButton button : buttons) button.setSelected(false);
-    ((JButton) e.getSource()).setSelected(true);
+    tool = Integer.parseInt(e.getActionCommand()); 
+    if (tool == 0){
+      gameStarted = true; 
+    }else if (tool == 1){
+      gameEnded = true; 
+    }
   }
-
-  
-  public void stateChanged(ChangeEvent e) {
-    speed = computeSpeed(slider.getValue());
-  }
-  
-
-  // returns number of times to step between repainting and processing mouse input
-  public int getSpeed() {
-    return speed;
-  }
-
-  
-  // returns speed based on sliderValue
-  // speed of 0 returns 10^3
-  // speed of 100 returns 10^6
-  private int computeSpeed(int sliderValue) {
-    return (int) Math.pow(10, 0.03 * sliderValue + 3);
-  } 
   
 
   public static void main(String[] args) {
@@ -184,5 +162,11 @@ public class SandDisplay extends JComponent
             new SandDisplay("Tetris", numRows, numCols, Solution.NAMES), //here will peek the upcoming pieces (if possible)
             new Solution.RandomGenerator(numCols));
     lab.run();
+  }
+
+  //doesn't allow us to delete this so leaving as blank we don't use
+  @Override
+  public int getSpeed() {
+    return 0;
   }
 }
