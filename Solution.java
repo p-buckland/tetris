@@ -86,8 +86,9 @@ public class Solution {
   }
 
   public void step(Shape currShape){
-
+    //test
     //if the shape cannot move down stop moving it
+    
     if(!canMoveDown(currShape)){
       currShape.stopMoving();
     }
@@ -95,12 +96,29 @@ public class Solution {
     //make the grid null for all the old locations
     if(canMoveDown(currShape)){
       for(Point p: currShape.getPoints()){
+        int[] mouseLoc = display.getMouseLocation(); // Line added troymendoza
         this.grid[p.getRow()][p.getColumn()] = null;
         //adding 1 to the row and then reassign the grid location, not sure if this will work
         p.row = p.row + 1; 
         this.grid[p.getRow()][p.getColumn()] = p; 
 
+        // Troy added lines below.
+        if (mouseLoc != null){ // All non-clicks are null
+          if (mouseLoc[1] > p.column){ // IF the mouse click you further right then column moves.
+            this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
+            p.column = p.column + 1;
+            this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
+          }
+          else if (mouseLoc[1] < p.column){
+            this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
+            p.column = p.column - 1;
+            this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
+          }
+        }
+        //System.out.print(p.row + "---" + p.column + "\n");
+        System.out.print(Arrays.toString(mouseLoc) + "\n");
       }
+    
 
     }
   }
@@ -241,6 +259,7 @@ public class Solution {
     Shape currShape = queue.pop();
     //add the new piece to the grid 
     for(Point p: currShape.getPoints()){
+      
       grid[p.getRow()][p.getColumn()] = p; 
     }
     

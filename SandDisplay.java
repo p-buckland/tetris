@@ -139,7 +139,7 @@ public class SandDisplay extends JComponent
     mouseLoc = toLocation(e);
   }
 
-  private int[] toLocation(MouseEvent e) {
+  public int[] toLocation(MouseEvent e) {
     int row = e.getY() / cellSize;
     int col = e.getX() / cellSize;
     if (row < 0 || row >= numRows || col < 0 || col >= numCols) return null;
