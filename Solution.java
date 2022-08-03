@@ -4,7 +4,7 @@ import java.util.*;
 
 public class Solution {
 
-  public static final String[] NAMES = {"Add Score here", "show next piece"};
+  public static final String[] NAMES = {"START GAME", "END GAME"};
 
   private Point[][] grid;
   private Deque<Shape> queue;
@@ -97,8 +97,8 @@ public class Solution {
     if(canMoveDown(currShape)){
       for(Point p: currShape.getPoints()){
         int[] mouseLoc = display.getMouseLocation(); // Line added troymendoza
+        
         this.grid[p.getRow()][p.getColumn()] = null;
-        //adding 1 to the row and then reassign the grid location, not sure if this will work
         p.row = p.row + 1; 
         this.grid[p.getRow()][p.getColumn()] = p; 
 
@@ -115,8 +115,9 @@ public class Solution {
             this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
           }
         }
+        //delete later 
         //System.out.print(p.row + "---" + p.column + "\n");
-        System.out.print(Arrays.toString(mouseLoc) + "\n");
+        //System.out.print(Arrays.toString(mouseLoc) + "\n");
       }
     
 
@@ -233,16 +234,13 @@ public class Solution {
     //deleted all this as it was for testing
   }
 
-  /** Runner that advances the display a determinate number of times. */
-  private void runNTimes(int times) {
-    for (int i = 0; i < times; i++) {
-      runOneTime();
-    }
-  }
-
   /** Runner that controls the window until it is closed. */ //need to change this until the grid is at the top
   public void run() {
-    while (true) {
+    while(!display.getGameStarted()){
+      display.pause(1);
+    }
+    //TODO: add code here that it will not run another time if there is a piece at the top
+    while (!display.getGameEnded()){
       runOneTime();
     }
   }
@@ -270,6 +268,10 @@ public class Solution {
       updateDisplay();
       display.repaint();
       display.pause(1000); // Wait for redrawing and for mouse
+      //TODO: function that looks for lines to delete and keeps score
+      //updateDisplay(); 
+      //display.repaint();
+      //pause for only 1 milisecond 
       int[] mouseLoc = display.getMouseLocation();
       if (mouseLoc != null) { // Test if mouse clicked
         locationClicked(mouseLoc[0], mouseLoc[1], display.getTool());
@@ -277,46 +279,9 @@ public class Solution {
     }
   }
 
-  /**
-   * An implementation of the SandDisplayInterface that doesn't display anything. Used for testing.
-   */
-  static class NullDisplay implements SandDisplayInterface {
-    private int numRows;
-    private int numCols;
-
-    public NullDisplay(int numRows, int numCols) {
-      this.numRows = numRows;
-      this.numCols = numCols;
-    }
-
-    public void pause(int milliseconds) {}
-
-    public int getNumRows() {
-      return numRows;
-    }
-
-    public int getNumColumns() {
-      return numCols;
-    }
-
-    public int[] getMouseLocation() {
-      return null;
-    }
-
-    public int getTool() {
-      return 0;
-    }
-
-    public void setColor(int row, int col, Color color) {}
-
-    public int getSpeed() {
-      return 1;
-    }
-
-    public void repaint() {}
-  }
-
+  
   /** Interface for the UI of the SandLab. */
+  //Add functions here if you want to bring them over from SandDisplay
   public interface SandDisplayInterface {
     public void repaint();
 
@@ -333,5 +298,9 @@ public class Solution {
     public int getSpeed();
 
     public int getTool();
+
+    public boolean getGameStarted();
+
+    public boolean getGameEnded(); 
   }
 }
