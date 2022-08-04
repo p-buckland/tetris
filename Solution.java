@@ -28,19 +28,6 @@ public class Solution {
         new Color(168, 162, 50), new Color(154, 50, 168), new Color(168, 127, 50)};
   }
 
-
-  /**
-   * Called when the user clicks on a location.
-   *
-   * @param col
-   */
-  private void locationClicked(int row, int col, int tool) {
-    // TODO: when a user clicks on a location it will drop the animated tetris piece 
-    // and turn it into a static piece
-
-    
-  }
-
   /** Copies each element of grid into the display. */
   public void updateDisplay() {
 
@@ -53,34 +40,9 @@ public class Solution {
           display.setColor(i, j, Color.BLACK);
          }
         }
-
       }
     }
 
-    public void removeFullLines() {
-    // Check to see if the line is full
-    int numFullLines = 0;
-    Boolean isFull = false;
-    for (int i = 0; i <display.getNumRows(); i++){
-      for (int j = 0; j < display.getNumColumns(); j++){
-        if(grid[i][j] != null){ // Find if spot is taken. Inner loop looks at the collumn of a row
-          numFullLines++; // How many pieces are in my row.
-          if(numFullLines == display.getNumColumns()){ //Check it line is full
-            isFull = true; // If the line is full 
-          }
-        }
-      }
-      // Since we already iterated over the collumns of the row t0 see if it was full 
-      // we need to iterate throught the column again.
-     for (int k = 0; k < display.getNumColumns(); k++){
-        if(isFull){
-          grid[i][k] = null;
-        }
-      }
-      isFull = false;
-      numFullLines = 0;
-    }
-  }
   public boolean canMoveDown(Shape currShape){
 
     for(Point p: currShape.getPoints()){
@@ -91,18 +53,15 @@ public class Solution {
       //if the next space down is not null and is not a point part of your current shape then you can't move down
       else if( this.grid[p.getRow()+1][p.getColumn()] != null && 
           !currShape.getPoints().contains(this.grid[p.getRow()+1][p.getColumn()]) ){
-        
+      
         return false; 
       }
-
     }
-
     return true; 
   }
 
   public void step(Shape currShape){
     //if the shape cannot move down stop moving it
-    removeFullLines();
     if(!canMoveDown(currShape)){
       currShape.stopMoving();
     }
@@ -116,8 +75,7 @@ public class Solution {
         p.row = p.row + 1; 
         this.grid[p.getRow()][p.getColumn()] = p; 
       }
-    }
-    
+    } 
   }
 
   public void mouseMoveCol(Shape currShape, int mouseCol ){
@@ -134,6 +92,57 @@ public class Solution {
           this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
         }
       }
+  }
+
+
+  /*Function that controls removing the full lines and calls helper functions
+   * to clear the grid of a full line and then shift down all points above
+   * 
+   */
+  public int countRemovedLines(){
+    int linesRemoved = 0; 
+    for (int i = 0; i < display.getNumRows(); i++){
+      if(removeFullLines(i)){
+        linesRemoved ++; 
+      }
+    }
+    deleteEmptyLines();
+    return linesRemoved; 
+
+  }
+
+  //return a boolean true if the given row is full and removed 
+  public boolean removeFullLines(int row) {
+    // Check to see if the given row is empty
+    for (int i = 0; i <display.getNumColumns(); i++){
+      if(grid[row][i] == null){
+        return false; 
+      }
+    }
+
+      //if you make it here the row is empty delete it
+     for (int j = 0; j < display.getNumColumns(); j++){
+          grid[row][j] = null; 
+      }
+      return true; 
+  }
+
+
+  //After a row is deleted because it's full this is called to shift everything down
+  //Called by countRemovedLines()
+  public void deleteEmptyLines(){
+    //loop through the grid from bottom to top, if there is nothing below move it one down
+    for (int i = display.getNumRows() - 1; i >= 0; i--){
+      for (int j = display.getNumColumns() - 1; j >= 0; j--){
+        Point p = this.grid[i][j];
+        if(i + 1 < display.getNumRows()){
+          if(this.grid[i+1][j] == null){
+            this.grid[i][j] = null;
+            this.grid[i+1][j] = p; 
+          }
+        }
+      }
+    }
   }
 
   /**Shape class to represent a tetris piece 
@@ -282,24 +291,17 @@ public class Solution {
     while(currShape.getMoving()){
       step(currShape);
       
-      //display.pause(500); //pause to wait for mouse click
       int[] mouseLoc = display.getMouseLocation();
       if (mouseLoc != null) { // Test if mouse clicked
         mouseMoveCol(currShape, mouseLoc[1]);
       }
       
-      //keep score function here 
+      int linesRemoved = countRemovedLines(); //removes full lines and counts them
+      //TODO: implement score(linesRemoved); as the score will change based on how many removed at once, HashMap<>
+      
       updateDisplay();
       display.repaint();
-      display.pause(500); // Troy commented this
-
-      //display.pause(500); // Wait for redrawing and for mouse
-      //TODO: function that looks for lines to delete and keeps score
-      //updateDisplay(); 
-      //display.repaint();
-      //pause for only 1 milisecond 
-
-
+      display.pause(500); 
     }
   }
 
