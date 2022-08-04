@@ -108,12 +108,7 @@ public class SandDisplay extends JComponent
     g.fillRect(col * cellSize, row * cellSize, cellSize, cellSize);
   }
 
-  public void mouseClicked(MouseEvent e) {
-    int row = e.getXOnScreen();
-    int collumn = e.getYOnScreen();
-    System.out.print("The mouse as been clicked at [row, col]");
-    System.out.print(Arrays.toString(toLocation(e)) + "\n");
-  }
+  public void mouseClicked(MouseEvent e) { }
 
   public void mousePressed(MouseEvent e) {
     mouseLoc = toLocation(e);

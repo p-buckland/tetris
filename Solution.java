@@ -57,8 +57,30 @@ public class Solution {
       }
     }
 
-
-
+    public void removeFullLines() {
+    // Check to see if the line is full
+    int numFullLines = 0;
+    Boolean isFull = false;
+    for (int i = 0; i <display.getNumRows(); i++){
+      for (int j = 0; j < display.getNumColumns(); j++){
+        if(grid[i][j] != null){ // Find if spot is taken. Inner loop looks at the collumn of a row
+          numFullLines++; // How many pieces are in my row.
+          if(numFullLines == display.getNumColumns()){ //Check it line is full
+            isFull = true; // If the line is full 
+          }
+        }
+      }
+      // Since we already iterated over the collumns of the row t0 see if it was full 
+      // we need to iterate throught the column again.
+     for (int k = 0; k < display.getNumColumns(); k++){
+        if(isFull){
+          grid[i][k] = null;
+        }
+      }
+      isFull = false;
+      numFullLines = 0;
+    }
+  }
   public boolean canMoveDown(Shape currShape){
 
     for(Point p: currShape.getPoints()){
@@ -80,6 +102,7 @@ public class Solution {
 
   public void step(Shape currShape){
     //if the shape cannot move down stop moving it
+    removeFullLines();
     if(!canMoveDown(currShape)){
       currShape.stopMoving();
     }
@@ -94,6 +117,7 @@ public class Solution {
         this.grid[p.getRow()][p.getColumn()] = p; 
       }
     }
+    
   }
 
   public void mouseMoveCol(Shape currShape, int mouseCol ){
@@ -258,7 +282,7 @@ public class Solution {
     while(currShape.getMoving()){
       step(currShape);
       
-      display.pause(1000); //pause to wait for mouse click
+      //display.pause(500); //pause to wait for mouse click
       int[] mouseLoc = display.getMouseLocation();
       if (mouseLoc != null) { // Test if mouse clicked
         mouseMoveCol(currShape, mouseLoc[1]);
@@ -267,7 +291,7 @@ public class Solution {
       //keep score function here 
       updateDisplay();
       display.repaint();
-      display.pause(1000); 
+      display.pause(500); // Troy commented this
 
       //display.pause(500); // Wait for redrawing and for mouse
       //TODO: function that looks for lines to delete and keeps score
