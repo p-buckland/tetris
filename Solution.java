@@ -26,22 +26,6 @@ public class Solution {
     this. queue = new ArrayDeque<Shape>();
     this.colorOptions = new Color[] { new Color(50, 158, 168), new Color(79, 235, 52), 
         new Color(168, 162, 50), new Color(154, 50, 168), new Color(168, 127, 50)};
-
-    //adding two tetris pieces to the queue
-    //TODO: figure out how many you should add to the queue
-    
-    queue.push(new Shape(1));
-    queue.push(new Shape(2));
-    queue.push(new Shape(0));
-    queue.push(new Shape(1));
-    queue.push(new Shape(2));
-    queue.push(new Shape(0));
-    queue.push(new Shape(1));
-    queue.push(new Shape(2));
-    queue.push(new Shape(0));
-    queue.push(new Shape(1));
-    queue.push(new Shape(2));
-    queue.push(new Shape(0));
   }
 
 
@@ -95,9 +79,7 @@ public class Solution {
   }
 
   public void step(Shape currShape){
-    //test
     //if the shape cannot move down stop moving it
-    
     if(!canMoveDown(currShape)){
       currShape.stopMoving();
     }
@@ -105,32 +87,29 @@ public class Solution {
     //make the grid null for all the old locations
     if(canMoveDown(currShape)){
       for(Point p: currShape.getPoints()){
-        int[] mouseLoc = display.getMouseLocation(); // Line added troymendoza
+       // int[] mouseLoc = display.getMouseLocation(); // Line added troymendoza
         
         this.grid[p.getRow()][p.getColumn()] = null;
         p.row = p.row + 1; 
         this.grid[p.getRow()][p.getColumn()] = p; 
-
-        // Troy added lines below.
-        if (mouseLoc != null){ // All non-clicks are null
-          if (mouseLoc[1] > p.column){ // IF the mouse click you further right then column moves.
-            this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
-            p.column = p.column + 1;
-            this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
-          }
-          else if (mouseLoc[1] < p.column){
-            this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
-            p.column = p.column - 1;
-            this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
-          }
-        }
-        //delete later 
-        //System.out.print(p.row + "---" + p.column + "\n");
-        //System.out.print(Arrays.toString(mouseLoc) + "\n");
       }
-    
-
     }
+  }
+
+  public void mouseMoveCol(Shape currShape, int mouseCol ){
+    for(Point p: currShape.getPoints()){
+      // Troy added lines below.
+        if (mouseCol> p.column){ // IF the mouse click you further right then column moves.
+          this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
+          p.column = p.column + 1;
+          this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
+        }
+        else if (mouseCol < p.column){
+          this.grid[p.getRow()][p.getColumn()] = null; //Delete old item
+          p.column = p.column - 1;
+          this.grid[p.getRow()][p.getColumn()] = p; // Move pieve on screen
+        }
+      }
   }
 
   /**Shape class to represent a tetris piece 
@@ -250,6 +229,11 @@ public class Solution {
     }
     //TODO: add code here that it will not run another time if there is a piece at the top
     while (!display.getGameEnded()){
+      if(this.queue.size() == 0 ){
+        queue.push(new Shape(1));
+        queue.push(new Shape(2));
+        queue.push(new Shape(0));
+      }
       runOneTime();
     }
   }
@@ -265,8 +249,7 @@ public class Solution {
     //pop a piece out of the queue
     Shape currShape = queue.pop();
     //add the new piece to the grid 
-    for(Point p: currShape.getPoints()){
-      
+    for(Point p: currShape.getPoints()){ 
       grid[p.getRow()][p.getColumn()] = p; 
     }
     
@@ -274,17 +257,25 @@ public class Solution {
     //currently only one piece will fall, I need to update the step code to get it to stop moving when it hits something
     while(currShape.getMoving()){
       step(currShape);
+      
+      display.pause(1000); //pause to wait for mouse click
+      int[] mouseLoc = display.getMouseLocation();
+      if (mouseLoc != null) { // Test if mouse clicked
+        mouseMoveCol(currShape, mouseLoc[1]);
+      }
+      
+      //keep score function here 
       updateDisplay();
       display.repaint();
-      display.pause(1000); // Wait for redrawing and for mouse
+      display.pause(1000); 
+
+      //display.pause(500); // Wait for redrawing and for mouse
       //TODO: function that looks for lines to delete and keeps score
       //updateDisplay(); 
       //display.repaint();
       //pause for only 1 milisecond 
-      int[] mouseLoc = display.getMouseLocation();
-      if (mouseLoc != null) { // Test if mouse clicked
-        locationClicked(mouseLoc[0], mouseLoc[1], display.getTool());
-      }
+
+
     }
   }
 
