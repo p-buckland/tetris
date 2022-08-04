@@ -6,12 +6,16 @@ public class Solution {
 
   public static final String[] NAMES = {"START GAME", "END GAME"};
 
+
   private Point[][] grid;
   private Deque<Shape> queue;
-
-  private Color[] colorOptions; 
+  
+  private HashMap<Integer, Integer> scoringMap; 
+  private Integer totalScore;
   private SandDisplayInterface display;
+
   private RandomGenerator random;
+  private Color[] colorOptions; 
 
   /**
    * Constructor.
@@ -26,6 +30,14 @@ public class Solution {
     this. queue = new ArrayDeque<Shape>();
     this.colorOptions = new Color[] { new Color(50, 158, 168), new Color(79, 235, 52), 
         new Color(168, 162, 50), new Color(154, 50, 168), new Color(168, 127, 50)};
+    totalScore = 0;
+    this.scoringMap = new HashMap<>();
+    scoringMap.put(1, 40);
+    scoringMap.put(2, 100);
+    scoringMap.put(3, 300);
+    scoringMap.put(4, 1200);
+    scoringMap.put(5, 3000); //used for any line after 4 you will get 3000 points
+
   }
 
   /** Copies each element of grid into the display. */
@@ -144,6 +156,27 @@ public class Solution {
       }
     }
   }
+
+  public void updateScore(int linesCleared){
+    
+    if(linesCleared != 0){
+      Integer addToTotal;
+      if(linesCleared > 4){
+        addToTotal = scoringMap.get(5);
+      }else {
+        addToTotal = scoringMap.get(linesCleared);
+      }
+      
+      totalScore = totalScore + addToTotal;
+      System.out.println(totalScore);
+    }
+  }
+
+  
+  public Integer getScore(){
+    return totalScore; 
+  }
+
 
   /**Shape class to represent a tetris piece 
    * 
@@ -278,7 +311,11 @@ public class Solution {
    * on the speed of the UI.
    */
   private void runOneTime() {
-    
+    int linesCleared = countRemovedLines(); //removes full lines and counts them
+    updateScore(linesCleared); //update the score of the game, more points for more lines cleared at once 
+    updateDisplay();
+    display.repaint();
+
     //pop a piece out of the queue
     Shape currShape = queue.pop();
     //add the new piece to the grid 
@@ -295,9 +332,6 @@ public class Solution {
       if (mouseLoc != null) { // Test if mouse clicked
         mouseMoveCol(currShape, mouseLoc[1]);
       }
-      
-      int linesRemoved = countRemovedLines(); //removes full lines and counts them
-      //TODO: implement score(linesRemoved); as the score will change based on how many removed at once, HashMap<>
       
       updateDisplay();
       display.repaint();
