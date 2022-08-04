@@ -118,7 +118,11 @@ public class Solution {
         linesRemoved ++; 
       }
     }
-    deleteEmptyLines();
+    //run the delete empty rows however many rows were removed
+    for(int i = 0; i < linesRemoved; i++){
+      deleteEmptyLines();
+    }
+    
     return linesRemoved; 
 
   }
@@ -132,39 +136,58 @@ public class Solution {
       }
     }
 
-      //if you make it here the row is empty delete it
+      //if you make it here the row is empty make it null
      for (int j = 0; j < display.getNumColumns(); j++){
           grid[row][j] = null; 
       }
       return true; 
   }
 
-
   //After a row is deleted because it's full this is called to shift everything down
   //Called by countRemovedLines()
   public void deleteEmptyLines(){
-    //loop through the grid from bottom to top, if there is nothing below move it one down
     for (int i = display.getNumRows() - 1; i >= 0; i--){
-      for (int j = display.getNumColumns() - 1; j >= 0; j--){
-        Point p = this.grid[i][j];
-        if(i + 1 < display.getNumRows()){
-          if(this.grid[i+1][j] == null){
-            this.grid[i][j] = null;
-            this.grid[i+1][j] = p; 
+      if(i != display.getNumRows() - 1){
+        if(isLineBelowEmpty(i + 1) ){      
+      
+          for (int j = display.getNumColumns() - 1; j >= 0; j--){
+                Point p = this.grid[i][j];
+                this.grid[i][j] = null;
+                this.grid[i+1][j] = p; 
           }
         }
       }
     }
   }
 
+//Used by deleteEmptyLines() to check if the entire row is empty before moving pieces down
+  public boolean isLineBelowEmpty(int row){
+    for (int i = 0; i < display.getNumColumns(); i++){
+      if(grid[row][i] != null){
+        return false; //if any of the columns in a row are not null return false
+      }
+    }
+
+    return true;
+  }
+
+  public boolean firstRowEmpty(){
+    for(int i = 0; i <display.getNumColumns(); i++){
+      if(grid[0][i] != null){
+        return false;
+      }
+    }
+    return true; 
+
+  }
+  //Update the totalScore, more points for more lines cleared 
   public void updateScore(int linesCleared){
-    
     if(linesCleared != 0){
       Integer addToTotal;
       if(linesCleared > 4){
-        addToTotal = scoringMap.get(5);
+        addToTotal = scoringMap.get(5);//if you clear more than 4 lines at once you get the same # of points
       }else {
-        addToTotal = scoringMap.get(linesCleared);
+        addToTotal = scoringMap.get(linesCleared); 
       }
       
       totalScore = totalScore + addToTotal;
@@ -197,22 +220,27 @@ public class Solution {
       
       //square shape piece
       if (shapeType == 0){
-        shape.add(new Point(1, 6, new Color(92, 88, 182)));
-        shape.add(new Point(1, 5, new Color(92, 88, 182)));
-        shape.add(new Point(0, 6, new Color(92, 88, 182)));
-        shape.add(new Point(0, 5, new Color(92, 88, 182)));
+        shape.add(new Point(1, 5, new Color(255,255,0)));
+        shape.add(new Point(1, 4, new Color(255,255,0)));
+        shape.add(new Point(0, 5, new Color(255,255,0)));
+        shape.add(new Point(0, 4, new Color(255,255,0)));
       } //L shape piece
       else if(shapeType == 1){
-        shape.add(new Point(2, 6, new Color(185, 87, 206)));
-        shape.add(new Point(2, 5, new Color(185, 87, 206)));
-        shape.add(new Point(1, 5, new Color(185, 87, 206)));
-        shape.add(new Point(0, 5, new Color(185, 87, 206)));
+        shape.add(new Point(2, 3, new Color(255,127,0)));
+        shape.add(new Point(2, 2, new Color(255,127,0)));
+        shape.add(new Point(1, 2, new Color(255,127,0)));
+        shape.add(new Point(0, 2, new Color(255,127,0)));
       } //straight piece 
       else if (shapeType == 2){
-        shape.add(new Point(3, 5, new Color(255, 145, 26)));
-        shape.add(new Point(2, 5, new Color(255, 145, 26)));
-        shape.add(new Point(1, 5, new Color(255, 145, 26)));
-        shape.add(new Point(0, 5, new Color(255, 145, 26)));
+        shape.add(new Point(3, 6, new Color(0,255,255)));
+        shape.add(new Point(2, 6, new Color(0,255,255)));
+        shape.add(new Point(1, 6, new Color(0,255,255)));
+        shape.add(new Point(0, 6, new Color(0,255,255)));
+      }else if (shapeType == 3){
+        shape.add(new Point(2, 6, new Color(185, 66, 245)));
+        shape.add(new Point(1, 7, new Color(185, 66, 245)));
+        shape.add(new Point(1, 6, new Color(185, 66, 245)));
+        shape.add(new Point(0, 6, new Color(185, 66, 245)));
       }
     }
 
@@ -293,15 +321,17 @@ public class Solution {
     while(!display.getGameStarted()){
       display.pause(1);
     }
-    //TODO: add code here that it will not run another time if there is a piece at the top
-    while (!display.getGameEnded()){
+
+    while (!display.getGameEnded() && firstRowEmpty()){
       if(this.queue.size() == 0 ){
         queue.push(new Shape(1));
         queue.push(new Shape(2));
         queue.push(new Shape(0));
+        queue.push(new Shape(3));
       }
       runOneTime();
     }
+    System.out.println("Game Over");
   }
 
 
