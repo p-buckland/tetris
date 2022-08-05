@@ -188,6 +188,7 @@ public class Solution {
         addToTotal = scoringMap.get(5);//if you clear more than 4 lines at once you get the same # of points
       }else {
         addToTotal = scoringMap.get(linesCleared); 
+        
       }
       
       totalScore = totalScore + addToTotal;
@@ -343,6 +344,8 @@ public class Solution {
   private void runOneTime() {
     int linesCleared = countRemovedLines(); //removes full lines and counts them
     updateScore(linesCleared); //update the score of the game, more points for more lines cleared at once 
+    String score = "Score: " + Integer.toString(totalScore);
+    display.scoreLabel(score);
     updateDisplay();
     display.repaint();
 
@@ -374,6 +377,8 @@ public class Solution {
   //Add functions here if you want to bring them over from SandDisplay
   public interface SandDisplayInterface {
     public void repaint();
+
+    public void  scoreLabel(String score);
 
     public void pause(int milliseconds);
 
