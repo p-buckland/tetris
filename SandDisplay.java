@@ -20,6 +20,8 @@ public class SandDisplay extends JComponent
   private JButton[] buttons;
   private boolean gameStarted; 
   private boolean gameEnded; 
+  private JPanel buttonPanel;
+  private JLabel scoreLabel;
 
   public SandDisplay(String title, int numRows, int numCols, String[] buttonNames) {
     this.numRows = numRows;
@@ -46,7 +48,7 @@ public class SandDisplay extends JComponent
     addMouseMotionListener(this);
     topPanel.add(this);
 
-    JPanel buttonPanel = new JPanel();
+    buttonPanel = new JPanel();
     buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.PAGE_AXIS));
     topPanel.add(buttonPanel);
 
@@ -60,14 +62,34 @@ public class SandDisplay extends JComponent
       buttonPanel.add(buttons[i]);
     }
 
+    //Build score information
+    
+    
+    scoreLabel = new JLabel("Score: ");
+    scoreLabel.setForeground(Color.BLACK);
+    buttonPanel.add(scoreLabel);
+
     buttons[tool].setSelected(true);
 
     frame.pack();
     frame.setVisible(true);
   }
 
+  
   public void paintComponent(Graphics g) {
     g.drawImage(image, 0, 0, null);
+  }
+
+  public void scoreLabel(String score){
+    //JLabel scoreLabel = new JLabel(score);
+    //scoreLabel.setForeground(Color.BLACK);
+    //buttonPanel.add(scoreLabel);
+    scoreLabel.setText(score);
+    frame.invalidate();
+    frame.validate();
+    frame.repaint();
+    //buttonPanel.setVisible(true);
+    //this.updateUI();
   }
 
   public void pause(int milliseconds) {
