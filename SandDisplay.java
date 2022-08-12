@@ -63,8 +63,6 @@ public class SandDisplay extends JComponent
     }
 
     //Build score information
-    
-    
     scoreLabel = new JLabel("Score: ");
     scoreLabel.setForeground(Color.BLACK);
     buttonPanel.add(scoreLabel);
