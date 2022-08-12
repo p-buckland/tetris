@@ -4,18 +4,15 @@ import java.util.*;
 
 public class Solution {
 
+  //Words to display on the buttons
   public static final String[] NAMES = {"START GAME", "END GAME"};
-
 
   private Point[][] grid;
   private Deque<Shape> queue;
   
   private HashMap<Integer, Integer> scoringMap; 
   private Integer totalScore;
-  private SandDisplayInterface display;
-
-  private RandomGenerator random;
-  private Color[] colorOptions; 
+  private SandDisplayInterface display; 
 
   /**
    * Constructor.
@@ -27,9 +24,7 @@ public class Solution {
     this.display = display;
     this.random = random;
     this.grid = new Point[display.getNumRows()][display.getNumColumns()];
-    this. queue = new ArrayDeque<Shape>();
-    this.colorOptions = new Color[] { new Color(50, 158, 168), new Color(79, 235, 52), 
-        new Color(168, 162, 50), new Color(154, 50, 168), new Color(168, 127, 50)};
+    this.queue = new ArrayDeque<Shape>();
     totalScore = 0;
     this.scoringMap = new HashMap<>();
     scoringMap.put(1, 40);
@@ -55,6 +50,11 @@ public class Solution {
       }
     }
 
+  /** Tests to see if the current tetris shape can move down in the grid 
+  *(not hit another piece or the bottom of the board. 
+  * 
+  *@param currShape A shape object representing the current tetris piece moving
+  */
   public boolean canMoveDown(Shape currShape){
 
     for(Point p: currShape.getPoints()){
@@ -72,6 +72,9 @@ public class Solution {
     return true; 
   }
 
+  /** If the shape can move down this function moves the piece down one row
+  *@param currShape A shape object representing the current tetris piece moving
+  */
   public void step(Shape currShape){
     //if the shape cannot move down stop moving it
     if(!canMoveDown(currShape)){
@@ -90,6 +93,10 @@ public class Solution {
     } 
   }
 
+  /** If the mouse is clicked the column location is passed in and the current piece is moved to that column. 
+  *@param currShape A shape object representing the current tetris piece moving
+  *@param mouseCol An int representing the mouse column just clicked 
+  */
   public void mouseMoveCol(Shape currShape, int mouseCol ){
     for(Point p: currShape.getPoints()){
       // Troy added lines below.
@@ -127,8 +134,11 @@ public class Solution {
 
   }
 
-  //return a boolean true if the given row is full and removed 
-  public boolean removeFullLines(int row) {
+  /**Returns a boolean true if the given row is full and clears all the points in that row
+  *Called by countRemovedLines()
+  *@param row An int with the row to clear
+  */
+  private boolean removeFullLines(int row) {
     // Check to see if the given row is empty
     for (int i = 0; i <display.getNumColumns(); i++){
       if(grid[row][i] == null){
@@ -143,9 +153,10 @@ public class Solution {
       return true; 
   }
 
-  //After a row is deleted because it's full this is called to shift everything down
-  //Called by countRemovedLines()
-  public void deleteEmptyLines(){
+  /**After a row is deleted because it's full this is called to shift everything down
+  *Called by countRemovedLines()
+  */
+  private void deleteEmptyLines(){
     for (int i = display.getNumRows() - 1; i >= 0; i--){
       if(i != display.getNumRows() - 1){
         if(isLineBelowEmpty(i + 1) ){      
@@ -160,17 +171,21 @@ public class Solution {
     }
   }
 
-//Used by deleteEmptyLines() to check if the entire row is empty before moving pieces down
-  public boolean isLineBelowEmpty(int row){
+  /** Checks if the entire row is empty before moving pieces down after a row has been cleared
+  *Called by deleteEmptyLines()
+  *@param row The row to check
+  */
+  private boolean isLineBelowEmpty(int row){
     for (int i = 0; i < display.getNumColumns(); i++){
       if(grid[row][i] != null){
         return false; //if any of the columns in a row are not null return false
       }
     }
-
     return true;
   }
 
+  /**Checks if the first row is empty, if it's not empty the game is over 
+  */
   public boolean firstRowEmpty(){
     for(int i = 0; i <display.getNumColumns(); i++){
       if(grid[0][i] != null){
@@ -180,23 +195,23 @@ public class Solution {
     return true; 
 
   }
-  //Update the totalScore, more points for more lines cleared 
+  /**Updates the totalScore variance, more points for more lines cleared 
+  *@param linesCleared the number of lines cleared at a time
+  */
   public void updateScore(int linesCleared){
     if(linesCleared != 0){
       Integer addToTotal;
       if(linesCleared > 4){
         addToTotal = scoringMap.get(5);//if you clear more than 4 lines at once you get the same # of points
       }else {
-        addToTotal = scoringMap.get(linesCleared); 
-        
+        addToTotal = scoringMap.get(linesCleared);  
       }
-      
       totalScore = totalScore + addToTotal;
       System.out.println(totalScore);
     }
   }
 
-  
+  /** Get method to return the score to the SandDisplay class */
   public Integer getScore(){
     return totalScore; 
   }
@@ -208,16 +223,14 @@ public class Solution {
    private static class Shape{
     private ArrayList<Point> shape; 
     private boolean isMoving; 
-    
-    //TODO: update code to randomize the column 
-    //TODO: update code to randomize the color of a list of colors 
 
     public Shape (int shapeType){
       this.shape = new ArrayList<Point>();
       this.isMoving = true; 
       
 
-      //insert reverse order because arraylist holds order and you want to update them from bottom of the grid to top
+      //insert Points into the array list in reverse order because 
+      //arraylist holds order and you want to update them from bottom of the grid to top
       
       //square shape piece
       if (shapeType == 0){
@@ -254,7 +267,6 @@ public class Solution {
     public void stopMoving(){
       this.isMoving = false; 
     }
-
    }
 
   /** Point class - four points make up a tetris shape 
@@ -286,38 +298,13 @@ public class Solution {
 
   }
 
-  /**
-   * Special random number generating class to randomize tetris shapes & colors 
-   */
-  public static class RandomGenerator {
-    private static Random randomNumberGeneratorForColumn;
-    private static Random randomNumberGeneratorForColor;
-    private static int numCols; 
-
-    public RandomGenerator(int numCols) {
-      randomNumberGeneratorForColumn = new Random();
-      randomNumberGeneratorForColor = new Random();
-      this.numCols = numCols; 
-
-    }
-
-    /**
-     * Method that returns a random column to start the tetris piece in
-     */
-    public int getRandomColumn() {
-      return randomNumberGeneratorForColumn.nextInt(numCols-1);
-    }
-
-    public int getRandomColor(){
-      return randomNumberGeneratorForColor.nextInt(4);
-    }
-  }
-
   public static void main(String[] args) {
     //deleted all this as it was for testing
   }
 
-  /** Runner that controls the window until it is closed. */ //need to change this until the grid is at the top
+  /** Runner that calls the runOneTime functions when the game started button is clicked
+  * and stops once the game ended button is clicked on or the first row is full 
+  */ 
   public void run() {
     while(!display.getGameStarted()){
       display.pause(1);
@@ -336,10 +323,10 @@ public class Solution {
   }
 
 
-  //THIS IS WHAT CONTROLS THE GAME
+  //Controls the game
   /**
-   * Runs one iteration of the display. Note that one iteration may call step repeatedly depending
-   * on the speed of the UI.
+   * Runs one iteration of the game, removes any full lines, updates the score, pops a piece out of the queue, 
+   * while a piece is moving - moves it down the board, updates the display
    */
   private void runOneTime() {
     int linesCleared = countRemovedLines(); //removes full lines and counts them
@@ -356,8 +343,8 @@ public class Solution {
       grid[p.getRow()][p.getColumn()] = p; 
     }
     
-    //while the piece is moving
-    //currently only one piece will fall, I need to update the step code to get it to stop moving when it hits something
+    //while the current tetris piece popped off the queue is moving, move it down the board 
+    //until it hits another piece or the bottom of the grid
     while(currShape.getMoving()){
       step(currShape);
       
